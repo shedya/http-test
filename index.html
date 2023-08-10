@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TCP Ping</title>
+  <script>
+    window.onload = function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var host = urlParams.get("host");
+      var port = urlParams.get("port");
+      var resultContainer = document.getElementById('results');
+      var count = 0;
+
+      function tcpPing() {
+        if (count < 3) {
+          var startTime = new Date().getTime();
+          var xhr = new XMLHttpRequest();
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+              var endTime = new Date().getTime();
+              var elapsedTime = endTime - startTime;
+              var adjustedTime = elapsedTime / 10; // Divide the delay by 5
+              var result = document.createElement('a');
+              result.innerHTML = adjustedTime.toFixed(2) + 'ms ';
+              resultContainer.appendChild(result);
+
+              count++;
+              // Perform TCP ping again
+              tcpPing();
+            }
+          };
+
+          xhr.open('GET', 'http://' + host + ':' + port, true);
+          xhr.send();
+        }
+      }
+
+      // Start the initial TCP ping
+      tcpPing();
+    };
+  </script>
+</head>
+<body>
+  <a id="results"></a>
+</body>
+</html>
